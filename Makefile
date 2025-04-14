@@ -17,6 +17,7 @@ OUTPUT_GENE_COUNTS = $(DATA_DIR)/gene_counts.csv
 ONCOPRINTER_DIR = $(DATA_DIR)/oncoprinter
 ONCOPRINTER_ALL = $(ONCOPRINTER_DIR)/all.txt
 ONCOPRINTER_CLINICAL = $(ONCOPRINTER_DIR)/clinical_data.txt
+OUTPUT_CHORD_DIAGRAM = $(DATA_DIR)/gene_comutation_chord.png
 
 # Default target
 .PHONY: help
@@ -38,6 +39,7 @@ help:
 	@echo "  to-oncoprinter-dx      - Convert data to OncoprinterValidated format filtered by diagnosis"
 	@echo "  to-oncoprinter-gene    - Convert data for a specific gene to OncoprinterValidated format"
 	@echo "  to-oncoprinter-clinical - Convert patient data to oncoprinter clinical data format"
+	@echo "  gene-comutation-chord  - Generate chord diagram of gene co-mutations"
 	@echo "  clean                  - Remove generated files"
 
 # Complete pipeline target
@@ -133,15 +135,23 @@ to-oncoprinter-dx: extract-all
 # Convert data for a specific gene to OncoprinterValidated format
 .PHONY: to-oncoprinter-gene
 to-oncoprinter-gene: extract-variants
-	@echo "Usage: make to-oncoprinter-gene GENE=gene_name"
+	@echo "Usage: make to-oncoprinter-gene GENE=gene_name [ONEFILE=1]"
+	@echo "       For multiple genes: make to-oncoprinter-gene GENE=gene1,gene2,gene3 [ONEFILE=1]"
 	@if [ -z "$(GENE)" ]; then \
-		echo "Error: GENE parameter is required. Example: make to-oncoprinter-gene GENE=TP53"; \
+		echo "Error: GENE parameter is required. Examples:"; \
+		echo "  make to-oncoprinter-gene GENE=TP53"; \
+		echo "  make to-oncoprinter-gene GENE=TP53,EGFR,KRAS"; \
+		echo "  make to-oncoprinter-gene GENE=TP53,EGFR,KRAS ONEFILE=1"; \
 		exit 1; \
 	fi
-	@echo "Converting data for gene '$(GENE)' to OncoprinterValidated format..."
+	@echo "Converting data for gene(s) '$(GENE)' to OncoprinterValidated format..."
 	mkdir -p $(ONCOPRINTER_DIR)
-	$(PYTHON) $(SRC_DIR)/to_oncoprinter_mutation_map_validated_dataset.py --gene "$(GENE)" --data_dir $(DATA_DIR)
-	@echo "Conversion complete. Output saved to $(ONCOPRINTER_DIR)/$(GENE).txt"
+	$(PYTHON) $(SRC_DIR)/to_oncoprinter_mutation_map_validated_dataset.py --gene "$(GENE)" --data_dir $(DATA_DIR) $(if $(ONEFILE),--onefile)
+	@if [ -n "$(ONEFILE)" ]; then \
+		echo "Conversion complete. Output saved to a single combined file in $(ONCOPRINTER_DIR)/"; \
+	else \
+		echo "Conversion complete. Output saved to $(ONCOPRINTER_DIR)/<gene>.txt for each gene."; \
+	fi
 
 # Extract all biomarker data
 .PHONY: extract-biomarkers
@@ -160,10 +170,18 @@ combine-to-excel: extract-all
 	$(PYTHON) $(SRC_DIR)/combine_csv_to_excel.py --input $(DATA_DIR) --output $(OUTPUT_EXCEL)
 	@echo "Combination complete. Output saved to $(OUTPUT_EXCEL)"
 
+# Generate chord diagram of gene co-mutations
+.PHONY: gene-comutation-chord
+gene-comutation-chord:
+	@echo "Generating gene co-mutation chord diagram..."
+	mkdir -p $(dir $(OUTPUT_CHORD_DIAGRAM))
+	$(PYTHON) $(SRC_DIR)/gene_comutation_chord.py --input $(ONCOPRINTER_ALL) --output $(OUTPUT_CHORD_DIAGRAM) --min-count 3 --top-genes 20
+	@echo "Chord diagram generated. Output saved to $(OUTPUT_CHORD_DIAGRAM)"
+
 # Clean generated files
 .PHONY: clean
 clean:
 	@echo "Removing generated files..."
-	rm -f $(OUTPUT_JSON) $(OUTPUT_VARIANTS_CSV) $(OUTPUT_CNA_CSV) $(OUTPUT_REARR_CSV) $(OUTPUT_MSI_CSV) $(OUTPUT_TMB_CSV) $(OUTPUT_PMI_CSV) $(OUTPUT_EXCEL) $(OUTPUT_GENE_COUNTS)
+	rm -f $(OUTPUT_JSON) $(OUTPUT_VARIANTS_CSV) $(OUTPUT_CNA_CSV) $(OUTPUT_REARR_CSV) $(OUTPUT_MSI_CSV) $(OUTPUT_TMB_CSV) $(OUTPUT_PMI_CSV) $(OUTPUT_EXCEL) $(OUTPUT_GENE_COUNTS) $(OUTPUT_CHORD_DIAGRAM)
 	rm -rf $(ONCOPRINTER_DIR)
 	@echo "Clean complete."
