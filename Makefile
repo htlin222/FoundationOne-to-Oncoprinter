@@ -40,6 +40,7 @@ help:
 	@echo "  to-oncoprinter-gene    - Convert data for a specific gene to OncoprinterValidated format"
 	@echo "  to-oncoprinter-clinical - Convert patient data to oncoprinter clinical data format"
 	@echo "  gene-comutation-chord  - Generate chord diagram of gene co-mutations"
+	@echo "  env                    - Create a Python virtual environment using uv"
 	@echo "  clean                  - Remove generated files"
 
 # Complete pipeline target
@@ -177,6 +178,23 @@ gene-comutation-chord:
 	mkdir -p $(dir $(OUTPUT_CHORD_DIAGRAM))
 	$(PYTHON) $(SRC_DIR)/gene_comutation_chord.py --input $(ONCOPRINTER_ALL) --output $(OUTPUT_CHORD_DIAGRAM) --min-count 3 --top-genes 20
 	@echo "Chord diagram generated. Output saved to $(OUTPUT_CHORD_DIAGRAM)"
+
+# Create a Python virtual environment using uv
+.PHONY: env
+env:
+	@echo "Creating Python virtual environment using uv..."
+	uv venv
+	@echo "Virtual environment created at .venv"
+	@echo ""
+	@echo "Installing dependencies..."
+	@echo "NOTE: This will not activate the virtual environment in your current shell."
+	@echo "You still need to run 'source .venv/bin/activate' to activate it."
+	@echo ""
+	uv pip install --python .venv/bin/python -r requirements.txt
+	@echo ""
+	@echo "Dependencies installed successfully!"
+	@echo "To activate the virtual environment, run:"
+	@echo "  source .venv/bin/activate"
 
 # Clean generated files
 .PHONY: clean

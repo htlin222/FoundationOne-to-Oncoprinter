@@ -1,0 +1,18 @@
+[project]
+name = "foundationone-to-oncoprinter"
+version = "0.1.0"
+description = "A toolkit for processing, analyzing, and visualizing FoundationOne genetic data"
+readme = "README.md"
+requires-python = ">=3.6"
+dependencies = [
+    "xmltodict",
+    "pandas",
+    "numpy",
+    "openpyxl",
+    "lxml",
+    "matplotlib"
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

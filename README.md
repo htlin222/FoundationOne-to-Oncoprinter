@@ -1,10 +1,10 @@
-# FoundationOne Genomic Report Processing
+# FoundationOne to Oncoprinter
 
-A comprehensive toolkit for processing, analyzing, and visualizing genetic data from genomic reports.
+A comprehensive toolkit for processing, analyzing, and visualizing genetic data from FoundationOne genomic reports.
 
 ## Overview
 
-This project provides a pipeline for extracting, processing, and analyzing genetic data from genomic reports. It converts XML-based genomic reports into structured formats (JSON, CSV, Excel) and provides tools for data visualization using Oncoprinter.
+This project provides a pipeline for extracting, processing, and analyzing genetic data from FoundationOne genomic reports. It converts XML-based reports into structured formats (JSON, CSV, Excel) and provides tools for data visualization using Oncoprinter, including gene co-mutation analysis.
 
 ## Features
 
@@ -20,7 +20,9 @@ This project provides a pipeline for extracting, processing, and analyzing genet
   - Diagnosis-specific filtering
   - Gene-specific mutation mapping
   - Clinical data integration
-- **Gene Analysis**: Extract and count gene occurrences across the dataset
+- **Gene Analysis**: 
+  - Extract and count gene occurrences across the dataset
+  - Generate chord diagrams of gene co-mutations
 
 ## Installation
 
@@ -54,16 +56,17 @@ This project provides a pipeline for extracting, processing, and analyzing genet
    # Create a basic pyproject.toml
    cat > pyproject.toml << EOL
    [project]
-   name = "genetic-workshop"
+   name = "foundationone-to-oncoprinter"
    version = "0.1.0"
-   description = "A toolkit for processing, analyzing, and visualizing genetic data"
+   description = "A toolkit for processing, analyzing, and visualizing FoundationOne genetic data"
    readme = "README.md"
    requires-python = ">=3.6"
    dependencies = [
        "pandas",
        "numpy",
        "openpyxl",
-       "lxml"
+       "lxml",
+       "matplotlib"
    ]
 
    [build-system]
@@ -75,14 +78,9 @@ This project provides a pipeline for extracting, processing, and analyzing genet
    uv sync
    ```
 
-4. Run a command in the project environment:
-   ```
-   uv run -- python src/all_genes.py
-   ```
-
 ## Usage
 
-The project uses a Makefile to orchestrate the data processing pipeline. Here are the main commands:
+The project uses a Makefile to orchestrate the data processing pipeline. Run `make help` to see all available commands.
 
 ### Basic Pipeline
 
@@ -137,8 +135,21 @@ make to-oncoprinter-dx DX=lung
 # Convert data for a specific gene to Oncoprinter format
 make to-oncoprinter-gene GENE=TP53
 
+# Convert data for multiple genes to Oncoprinter format
+make to-oncoprinter-gene GENE=TP53,EGFR,KRAS
+
+# Convert data for multiple genes to a single Oncoprinter file
+make to-oncoprinter-gene GENE=TP53,EGFR,KRAS ONEFILE=1
+
 # Convert patient data to Oncoprinter clinical data format
 make to-oncoprinter-clinical
+```
+
+### Visualization
+
+```bash
+# Generate chord diagram of gene co-mutations
+make gene-comutation-chord
 ```
 
 ## File Structure
@@ -149,23 +160,15 @@ make to-oncoprinter-clinical
   - `to_oncoprinter_*.py`: Converts data to Oncoprinter format
   - `all_genes.py`: Extracts and counts gene occurrences
   - `combine_csv_to_excel.py`: Combines CSV files into Excel
+  - `gene_comutation_chord.py`: Generates chord diagrams for gene co-mutations
 - `data/`: Data directory
   - `xml/`: Input XML files
   - `*.csv`: Extracted data in CSV format
   - `*.json`: Processed data in JSON format
   - `*.xlsx`: Combined data in Excel format
   - `oncoprinter/`: Oncoprinter-compatible output files
-
-## Gene Analysis
-
-The project includes a tool for analyzing gene frequencies in the dataset. The most common genes found include:
-- TP53 (127 occurrences)
-- APC (59 occurrences)
-- MLL2 (58 occurrences)
-- EGFR (48 occurrences)
-- ARID1A/PIK3CA (39 occurrences each)
-
-In total, 370 unique genes with 2999 total occurrences were identified in the dataset.
+    - `all.txt`: Complete dataset in Oncoprinter format
+    - `clinical_data.txt`: Clinical data in Oncoprinter format
 
 ## Oncoprinter Integration
 
@@ -178,6 +181,14 @@ The project generates files compatible with [Oncoprinter](https://www.cbioportal
 - **Gene-Specific Analysis**: Analyze mutations for specific genes
 - **Clinical Data Integration**: Include clinical data in visualizations
 
+## Gene Co-mutation Analysis
+
+The project includes functionality to generate chord diagrams of gene co-mutations, providing visual insights into gene relationships. The diagram shows connections between genes that are mutated together in the same samples, with thicker lines indicating more frequent co-mutations.
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+[Specify your license here]

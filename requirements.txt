@@ -1,0 +1,6 @@
+xmltodict
+pandas
+numpy
+openpyxl
+lxml
+matplotlib
