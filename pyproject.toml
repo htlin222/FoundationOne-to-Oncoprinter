@@ -10,7 +10,8 @@ dependencies = [
     "numpy",
     "openpyxl",
     "lxml",
-    "matplotlib"
+    "matplotlib",
+    "xlsxwriter"
 ]
 
 [build-system]

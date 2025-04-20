@@ -187,14 +187,20 @@ env:
 	@echo "Virtual environment created at .venv"
 	@echo ""
 	@echo "Installing dependencies..."
-	@echo "NOTE: This will not activate the virtual environment in your current shell."
-	@echo "You still need to run 'source .venv/bin/activate' to activate it."
-	@echo ""
 	uv pip install --python .venv/bin/python -r requirements.txt
 	@echo ""
 	@echo "Dependencies installed successfully!"
-	@echo "To activate the virtual environment, run:"
+	@echo ""
+	@echo "====================================================================="
+	@echo "IMPORTANT: The virtual environment has been created, but NOT activated"
+	@echo "To activate it, run this command:"
+	@echo ""
 	@echo "  source .venv/bin/activate"
+	@echo ""
+	@echo "Alternatively, you can use this one-liner to create and activate:"
+	@echo ""
+	@echo "  make env && source .venv/bin/activate"
+	@echo "====================================================================="
 
 # Clean generated files
 .PHONY: clean
