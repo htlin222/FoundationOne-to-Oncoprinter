@@ -1,7 +1,7 @@
 # Makefile for genetic workshop
 
 # Variables
-PYTHON = python
+PYTHON = $(shell pwd)/.venv/bin/python
 SRC_DIR = src
 DATA_DIR = data
 XML_DIR = $(DATA_DIR)/xml
