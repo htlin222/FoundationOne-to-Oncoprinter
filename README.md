@@ -1,5 +1,10 @@
 # FoundationOne to Oncoprinter
 
+[![GitHub stars](https://img.shields.io/github/stars/htlin222/FoundationOne-to-Oncoprinter)](https://github.com/htlin222/FoundationOne-to-Oncoprinter/stargazers)
+[![Last Commit](https://img.shields.io/github/last-commit/htlin222/FoundationOne-to-Oncoprinter)](https://github.com/htlin222/FoundationOne-to-Oncoprinter/commits/main)
+[![Python](https://img.shields.io/badge/python-3.6%2B-blue)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 A comprehensive toolkit for processing, analyzing, and visualizing genetic data from FoundationOne genomic reports.
 
 ## Overview
@@ -191,4 +196,4 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-[Specify your license here]
+This project is licensed under the [MIT License](LICENSE).
